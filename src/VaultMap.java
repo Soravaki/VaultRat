@@ -1,10 +1,10 @@
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class VaultMap extends Graph{
+    String[][] maze;
+    int[][] adjMazeRef;
     VaultMap(String filename) throws IOException {
         //adjmap = new HashMap<>();
         // Instantiate Scanner and takes in input for how many mazes
@@ -15,8 +15,8 @@ public class VaultMap extends Graph{
         while (numMaze != 0) {
             Graph g = new Graph();
             String[] dimensions = sc.nextLine().split(" ");
-            int length = Integer.parseInt(dimensions[0]);
-            int height = Integer.parseInt(dimensions[1]);
+            int height = Integer.parseInt(dimensions[0]);
+            int length = Integer.parseInt(dimensions[1]);
             System.out.println("dimensions in");
             // ties the characters together into a graph
             // until num = height -1
@@ -40,7 +40,7 @@ public class VaultMap extends Graph{
             // traverses 2d array to make adjList
             for (int y=0; y<height; y++){
                 for (int x=0; x<length; x++){
-                    System.out.print(adjMazeRef[y][x] + " ");
+                    //System.out.print(adjMazeRef[y][x] + " ");
                     // addEdge to the right if in bounds
                     if (x<length-1 && !(hasVertex( Integer.toString(adjMazeRef[y][x]))))
                         g.addEdge(Integer.toString(adjMazeRef[y][x]), Integer.toString((adjMazeRef[y][x]+1)));
@@ -58,18 +58,37 @@ public class VaultMap extends Graph{
                         g.addEdge(Integer.toString(adjMazeRef[y][x]), Integer.toString((adjMazeRef[y][x]+height)));
                 }
             }
-
-            System.out.println(g.adjmap.keySet());
+            //System.out.println(g.adjmap.keySet());
             /*for (int i=0; i<length*height; i++){
                 System.out.println(adjmap.containsKey(Integer.toString(i)));
             }*/
-
-            /*// debug - prints out maze
+            // debug - prints out maze
             for (int i=0; i<height; i++){
-                System.out.println(Arrays.toString(adjMazeRef[i]));
-            }*/
-
-            System.out.println("compiled. length : " + length + " height : " + height);
+                System.out.println(Arrays.toString(maze[i]));
+            }
+            //System.out.println("compiled. length : " + length + " height : " + height + " num : " +numMaze );
+            // subtracts 1 maze from the total needed to be compiled
+            pathfinding(maze, adjMazeRef);
+            numMaze--;
         }
+    }
+
+    public void pathfinding(String[][] mazeArray, String[][] adjMazeArray){
+        // instantiate objects for pathfinding
+        Queue q = new LinkedList<>();
+        int[] startPosCords = new int[2];
+
+        // nested for loop to iterate through the entire maze to find the starting point
+        for (int y=0; y<mazeArray.length; y++){
+            for (int x=0; x<mazeArray[y].length; x++){
+                if (Objects.equals(mazeArray[y][x], "S")) {
+                    // stores startPos into array that houses the cords
+                    startPosCords[0] = y;
+                    startPosCords[1] = x;
+                }
+            }
+        }
+        int startPos = adjMazeRef[startPosCords[0]][startPosCords[1]];
+        System.out.println(startPos);
     }
 }
